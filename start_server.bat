@@ -1,0 +1,1 @@
+cargo watch -- cargo run --bin server -- --port 8081

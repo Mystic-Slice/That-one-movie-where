@@ -1,0 +1,2 @@
+[workspace]
+members = ["server", "frontend", "movie_types"]
