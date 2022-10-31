@@ -1,14 +1,12 @@
-use gloo::console::log;
+use yew::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{InputEvent, HtmlInputElement};
-use yew::prelude::*;
-
-use crate::ui::movie_view::MovieView;
+use crate::components::movie_view::MovieView;
 
 #[derive(PartialEq)]
 enum MovieViewState {
-    Closed,
-    Open
+    Closed, // Only input bar and buttons
+    Open // Movie info shown
 }
 
 impl Default for MovieViewState {
@@ -17,8 +15,8 @@ impl Default for MovieViewState {
     }
 }
 
-#[function_component(App)]
-pub fn app() -> Html {
+#[function_component(MainView)]
+pub fn main_view() -> Html {
     // need separate movie_id_state to prevent
     // re-renders of MovieView whenever text changes
     let movie_id_state = use_state(|| String::from(""));
@@ -26,12 +24,12 @@ pub fn app() -> Html {
     let text_state = use_state(|| String::from(""));
 
     // submit button event handler
+    // TODO: Error when input not valid
     let handle_submit = {
         let movie_id_state = movie_id_state.clone();
         let movie_view_state = movie_view_state.clone();
         let text_state = text_state.clone();
         Callback::from(move |_| {
-            log!("Changed text");
             movie_view_state.set(MovieViewState::Open);
             movie_id_state.set((*text_state).clone());
         })

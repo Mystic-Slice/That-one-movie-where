@@ -1,2 +1,2 @@
 pub mod movie_view;
-pub mod app;
+pub mod main_view;

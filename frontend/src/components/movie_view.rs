@@ -2,9 +2,9 @@ use yew::prelude::*;
 use yew_hooks::prelude::*;
 use regex::Regex;
 
-use crate::api::get_movie_info;
-use crate::movie::Movie;
-use crate::movie_error::MovieError;
+use crate::api::get_movie_info_from_server;
+use movie_types::movie::Movie;
+use movie_types::movie_error::MovieError;
 
 #[derive(Clone, Properties, PartialEq)]
 pub struct MovieViewProps {
@@ -17,10 +17,11 @@ pub fn movie_view(props: &MovieViewProps) -> Html {
         let movie_id = props.movie_id.clone();
         use_async(
             async move {
+                // Check if movie id is valid
                 if !Regex::new(r"^tt\d+$").unwrap().is_match(&movie_id) {
                     Err(MovieError::new(&format!("Invalid movie id {movie_id}")))
                 } else {
-                    get_movie_info(&movie_id).await
+                    get_movie_info_from_server(&movie_id).await
                 }
             }
         )
