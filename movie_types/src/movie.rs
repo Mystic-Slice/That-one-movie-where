@@ -1,4 +1,8 @@
-#[derive(Clone, PartialEq)]
+use serde::{Serialize, Deserialize};
+
+#[derive(Clone, PartialEq, Serialize, Deserialize)]
+/// Type to hold all the info about a movie
+/// TODO: Add all the other data members
 pub struct Movie {
     title: String,
     rating: f32,
