@@ -35,7 +35,7 @@ pub async fn get_movie_info(Query(params): Query<Params>) -> Response {
     let movie_id = params.movie_id.unwrap();
 
     const API_URL: &str = "http://www.omdbapi.com/";
-    let api_key = fs::read_to_string("not_api_key.txt").unwrap();
+    let api_key = fs::read_to_string("api_key.txt").unwrap();
 
     let client = reqwest::Client::new();
 
