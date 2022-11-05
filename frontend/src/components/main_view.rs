@@ -17,21 +17,21 @@ impl Default for MovieViewState {
 
 #[function_component(MainView)]
 pub fn main_view() -> Html {
-    // need separate movie_id_state to prevent
+    // need separate movie_url_state to prevent
     // re-renders of MovieView whenever text changes
-    let movie_id_state = use_state(|| String::from(""));
+    let movie_url_state = use_state(|| String::from(""));
     let movie_view_state = use_state(|| MovieViewState::default());
     let text_state = use_state(|| String::from(""));
 
     // submit button event handler
     // TODO: Error when input not valid
     let handle_submit = {
-        let movie_id_state = movie_id_state.clone();
+        let movie_url_state = movie_url_state.clone();
         let movie_view_state = movie_view_state.clone();
         let text_state = text_state.clone();
         Callback::from(move |_| {
             movie_view_state.set(MovieViewState::Open);
-            movie_id_state.set((*text_state).clone());
+            movie_url_state.set((*text_state).clone());
         })
     };
 
@@ -55,12 +55,22 @@ pub fn main_view() -> Html {
 
     html! {
         <div>
-            <input type="text" value={(*text_state).clone()} oninput={handle_change_text}/>
-            <button onclick={handle_submit}>{"Submit"}</button>
-            <button onclick={handle_close}>{"Close"}</button>
-            if *movie_view_state == MovieViewState::Open {
-                <MovieView movie_id={(*movie_id_state).clone()}/>
+            <div class="input-container">
+                <input id="movie-id" class="text-bar" value={(*text_state).clone()} oninput={handle_change_text} placeholder="IMDB-URL"/>
+                <button class="buttons" onclick={handle_submit}>{"Submit"}</button>
+                <button class="buttons" onclick={handle_close}>{"Close"}</button>
+            </div>
+            <div class="movie-view">
+            {
+                if *movie_view_state == MovieViewState::Open {
+                    html! {
+                        <MovieView movie_url={(*movie_url_state).clone()}/>
+                    }
+                } else {
+                    html! {}
+                }
             }
+            </div>
         </div>
     }
 }

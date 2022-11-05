@@ -2,7 +2,6 @@ use std::fmt;
 
 #[derive(Debug, Clone)]
 /// Type for custom errors
-/// TODO: Probably convert to enum and have more descriptive error messages
 pub struct MovieError {
     details: String
 }

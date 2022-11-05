@@ -8,20 +8,23 @@ use movie_types::movie_error::MovieError;
 
 #[derive(Clone, Properties, PartialEq)]
 pub struct MovieViewProps {
-    pub movie_id: String,
+    pub movie_url: String,
 }
 
 #[function_component(MovieView)]
 pub fn movie_view(props: &MovieViewProps) -> Html {
     let movie: UseAsyncHandle<Movie, MovieError> = {
-        let movie_id = props.movie_id.clone();
+        let movie_url = props.movie_url.clone();
         use_async(
             async move {
                 // Check if movie id is valid
-                if !Regex::new(r"^tt\d+$").unwrap().is_match(&movie_id) {
-                    Err(MovieError::new(&format!("Invalid movie id {movie_id}")))
-                } else {
+                let movie_id_loc = Regex::new(r"tt\d+").unwrap().find(&movie_url);
+                
+                if let Some(movie_id_loc) = movie_id_loc {
+                    let movie_id = movie_url[movie_id_loc.start()..movie_id_loc.end()].to_string();
                     get_movie_info_from_server(&movie_id).await
+                } else {
+                    Err(MovieError::new(&format!("Invalid movie url {movie_url}")))
                 }
             }
         )
@@ -29,29 +32,32 @@ pub fn movie_view(props: &MovieViewProps) -> Html {
 
     {
         let movie = movie.clone();
-        // requests API only when movie_id changes
+        // requests API only when movie_url changes
         use_effect_with_deps(
             move |_| {
                 movie.run();
                 || {}
             }
-            ,props.movie_id.clone()
+            ,props.movie_url.clone()
         );
     }
 
     html! {
         <div>
-            <p>
             {
                 if movie.loading {
-                    html! { "Loading, wait a sec" }
+                    html! { 
+                        <div class="loading-container">
+                            {"Loading, wait a sec" }
+                        </div>
+                    }
                 } else {
                     html! {
-                        <p>
+                        <div>
                         {
                             if let Some(error) = &movie.error {
                                 html! {
-                                    <div>
+                                    <div class="movie-error">
                                     {error}
                                     </div>
                                 }
@@ -65,10 +71,14 @@ pub fn movie_view(props: &MovieViewProps) -> Html {
                             } else {
                                 if let Some(movie) = &movie.data {
                                     html! {
-                                        <div>
-                                            <p>{ movie.get_title() }</p>
-                                            <p>{ movie.get_rating() }</p>
-                                            <img src={ movie.get_poster_url() }/>
+                                        <div class="movie-container">
+                                            <div class="movie-details">
+                                                <p>{ format!("Movie name: {}", movie.get_title()) }</p>
+                                                <p>{ format!("Movie rating: {}", movie.get_rating()) }</p>
+                                            </div>
+                                            <div class="movie-poster">
+                                                <img class="poster" src={ movie.get_poster_url() }/>
+                                            </div>
                                         </div>
                                     }
                                 } else {
@@ -76,11 +86,10 @@ pub fn movie_view(props: &MovieViewProps) -> Html {
                                 }
                             }
                         }
-                        </p>
+                        </div>
                     }
                 }
             }
-            </p>
         </div>
     }
 }
