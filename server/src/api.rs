@@ -55,6 +55,8 @@ pub async fn get_movie_info(Query(params): Query<Params>) -> Response {
     
     let json_response = json::parse(&response.unwrap()).unwrap();
 
+    println!("{}", json_response);
+
     if json_response["Response"] == "False" {
         return build_error_response(format!("Movie with id {movie_id} not found").to_string())
     }
@@ -65,7 +67,7 @@ pub async fn get_movie_info(Query(params): Query<Params>) -> Response {
     }
 
     // Check if all the required information is present
-    let req_keys = vec!["Title", "imdbRating", "Poster", "Type"];
+    let req_keys = vec!["Title", "imdbRating", "Poster", "Type", "Plot"];
     for key in req_keys {
         if !json_response.has_key(key) {
             return build_error_response(format!("Could not get the complete info about the movie with id {movie_id}").to_string())
@@ -81,6 +83,7 @@ pub async fn get_movie_info(Query(params): Query<Params>) -> Response {
                     json_response["Title"].to_string(),
                     json_response["imdbRating"].to_string().parse().unwrap(),
                     json_response["Poster"].to_string(),
+                    json_response["Plot"].to_string(),
                 )
             ).unwrap()
         )

@@ -7,14 +7,16 @@ pub struct Movie {
     title: String,
     rating: f32,
     poster_url: String,
+    plot: String,
 }
 
 impl Movie {
-    pub fn new(title: String, rating: f32, poster_url: String) -> Self {
+    pub fn new(title: String, rating: f32, poster_url: String, plot: String) -> Self {
         Self {
             title,
             rating,
             poster_url,
+            plot
         }
     }
 
@@ -29,6 +31,10 @@ impl Movie {
     pub fn get_poster_url(&self) -> String {
         self.poster_url.clone()
     }
+
+    pub fn get_plot(&self) -> String {
+        self.plot.clone()
+    }
 }
 
 impl Default for Movie {
@@ -37,6 +43,7 @@ impl Default for Movie {
             title: String::from("No Movie"),
             rating: 0f32,
             poster_url: String::from("https://i.imgflip.com/y57y9.jpg"),
+            plot: String::from("No plot found")
         }
     }
 }

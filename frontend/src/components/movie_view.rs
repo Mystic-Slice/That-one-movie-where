@@ -75,6 +75,7 @@ pub fn movie_view(props: &MovieViewProps) -> Html {
                                             <div class="movie-details">
                                                 <p>{ format!("Movie name: {}", movie.get_title()) }</p>
                                                 <p>{ format!("Movie rating: {}", movie.get_rating()) }</p>
+                                                <p class="plot">{ format!("{}", movie.get_plot()) }</p>
                                             </div>
                                             <div class="movie-poster">
                                                 <img class="poster" src={ movie.get_poster_url() }/>
